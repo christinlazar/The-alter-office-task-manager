@@ -1,0 +1,19 @@
+
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.droppable-container {
+    min-height: 100px; 
+    border: 1px solid #ccc;
+    padding: 10px;
+  }
+  .draggable-item {
+    padding: 8px;
+    margin: 4px 0;
+    background: #f4f4f4;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+  }
+  
