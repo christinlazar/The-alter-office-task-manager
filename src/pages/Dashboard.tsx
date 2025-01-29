@@ -1125,7 +1125,7 @@ document.body
     <option value="" disabled selected>
       Status
     </option>
-    {["to-do", "in-progress", "completed"].map((option, index) => (
+    {["to-do", "in-progress", "completed"].map((option) => (
       <option key={option} value={option} className="bg-black text-white">
         {option}
       </option>
