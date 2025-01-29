@@ -1,15 +1,13 @@
 
-import  { useEffect, useState } from 'react'
+import  { useState } from 'react'
 import { Task } from '../types/types'
 
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd'
 
 export default function Board({tasks,handleDragEnd,handleEditTask,handleDeleteTask}:{tasks:Task[],handleDragEnd:any,handleEditTask:any,handleDeleteTask:any}) {
-    const [activeTab, setActiveTab] = useState("list")
+
     const [menuOpen,setMenuOpen] = useState<string | null>(null)
-    useEffect(()=>{
-        setActiveTab("board")
-    })
+    
   
   return (
 

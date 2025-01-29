@@ -24,16 +24,13 @@ export default function Dashboard() {
   const [expandedSection, setExpandedSection] = useState<string[]>(["todo", "in-progress", "completed"])
   const [modal,setModalOpen] = useState<boolean>(false)
   const [editModal,setEditModalOpen] = useState(false)
-  const [tagInput, setTagInput] = useState<string>("");
   const [reload,setReload] = useState(false)
   const [searchValue,setSearchValue] = useState('')
   const [file,setFile] = useState<File | null>(null)
-  const [isChecked,setIsChecked] = useState<boolean>(false)
   const [bulkSelected,setBulkSelected] = useState<[]>([])
-  const [selectedStatus,handleSelect] = useState('')
   const [boradView,setBoardView] = useState<boolean>(false)
   const [noresult,setNoResult] = useState<boolean>(false)
-  const navigate = useNavigate()
+
 
   const [task, setTask] = useState<Task>({
       id:"",
@@ -52,7 +49,7 @@ export default function Dashboard() {
 
 
     const queryClient = useQueryClient();
-    const {data:tasks,isLoading,error} = useQuery<Task[] | undefined>('tasks',fetchTasks)
+    const {data:tasks} = useQuery<Task[] | undefined>('tasks',fetchTasks)
     const [taskList, setTaskList] = useState<Task[] | undefined | any>(tasks);
 
     const today = new Date().toISOString().split("T")[0]
@@ -60,10 +57,10 @@ export default function Dashboard() {
    
     useEffect(() => {
       const fetchTasks = async () => {
-        // Add a where clause to filter by userId
+  
         const tasksQuery = query(
           collection(db, "tasks"),
-          where("userId", "==", user?.user?.uid) // Ensure your tasks collection has a field called userId
+          where("userId", "==", user?.user?.uid) 
         );
         
         const querySnapshot = await getDocs(tasksQuery);
@@ -88,7 +85,7 @@ export default function Dashboard() {
         const selectedFile = e.target.files[0];
         setFile(selectedFile); 
       } else {
-        setFile(null); // Reset state if no file is selected
+        setFile(null); 
       }
     };
   
@@ -184,7 +181,6 @@ const {mutate : handleSearch} = useMutation(searchTasks,{
       setTaskList(data.tasks)
     }else if(data?.tasks.length == 0){
       setNoResult(true)
-        // toast.error("Can't find tasks with corresponding seach value")
     }
   },
   onError: (error) => {
