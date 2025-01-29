@@ -5,7 +5,6 @@ import { Task } from '../types/types';
 
 export const saveUserData = async (user:User) => {
     try {
-      console.log("user",user)
       const userRef = doc(db, "users", user.uid); 
       const userSnap = await getDoc(userRef)
       if (!userSnap.exists()) {
@@ -16,7 +15,7 @@ export const saveUserData = async (user:User) => {
           photoURL: user.photoURL,
           createdAt: new Date(),
         });
-        console.log("User data saved to Firestore!");
+        return {success:true,userId:user.uid}
       } else {
         console.log("User data already exists in Firestore");
       }
@@ -57,14 +56,11 @@ export const edittask = async (taskData:Task) =>{
     const querySnapshot = await getDocs(q);
 
     if (querySnapshot.empty) {
-      console.error("No matching documents found!");
       return { success: false, message: "No document found with the provided taskData.id" };
     }
 
     const docRef = querySnapshot.docs[0].ref; 
     await updateDoc(docRef, { ...taskData });
-
-    console.log("Task updated successfully!");
     return { success: true };
   } catch (error) {
     console.error("Error creating task:", error); 
@@ -73,12 +69,10 @@ export const edittask = async (taskData:Task) =>{
 
 export const updatetaskstatus = async ({ taskId, value }: { taskId: string; value: 'in-progress' | 'completed' | 'to-do' | string }) =>{
   try {
-    console.log("getting here",taskId,value)
     const taskRef = collection(db,"tasks");
     const q = query(taskRef,where("id", "==", taskId))
     const querySnapShot = await getDocs(q)
     const docRef = querySnapShot.docs[0].ref;
-    console.log(docRef)
     await updateDoc(docRef,{
       isCompleted:value
     })
@@ -107,7 +101,6 @@ export const fetchTasks = async () => {
     querySnapshot.forEach((doc) => {
     tasksData.push(doc.data() as Task);
     });
-    console.log('tasksData',tasksData)
     return tasksData;
   } catch (error) {
     console.error("Error fetching tasks: ", error);
@@ -133,7 +126,6 @@ export const searchTasks = async (searchValue: string) => {
       ...doc.data(),
     }));
 
-    console.log("Tasks:", tasks);
     return {success:true,tasks};
   } catch (error) {
     console.error("Error searching tasks:", error);
@@ -164,7 +156,6 @@ export const handlebulkChange = async (taskIdArray:[],status:string)=>{
       const q = query(taskRef,where("id", "==", taskId))
       const querySnapShot = await getDocs(q)
       const docRef = querySnapShot.docs[0].ref;
-      console.log(docRef)
       await updateDoc(docRef,{
         isCompleted:status
       })

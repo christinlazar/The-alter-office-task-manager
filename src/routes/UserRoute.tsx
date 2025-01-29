@@ -4,6 +4,7 @@ import { Routes,Route } from "react-router-dom";
 import { UserLoggedOut } from '../components/userLoggedOut';
 import { UserLoggedIn } from '../components/userLoggedIn';
 import Dashboard from '../pages/Dashboard';
+import Board from '../pages/Borad';
 
 const  UserRoute:React.FC = () => {
   return (

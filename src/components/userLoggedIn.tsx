@@ -6,7 +6,7 @@ export const  UserLoggedIn:React.FC = () =>{
     const {user} = useAuth()
   return (
     <>
-        {user ? <Outlet/> : <Navigate to='/'/>}
+        {!user ? <Navigate to='/'/> : <Outlet/>}
     </>
   )
 }

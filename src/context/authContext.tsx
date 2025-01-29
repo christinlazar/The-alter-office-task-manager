@@ -3,6 +3,7 @@ import React, { createContext, useContext, useState, useEffect, ReactNode } from
 import { onAuthStateChanged, User } from "firebase/auth";
 import { auth } from "../firebase/firebaseConfig";
 
+
 interface AuthContextProps {
   user: User | null;
 }
@@ -15,13 +16,13 @@ interface AuthProviderProps {
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
-
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
     });
     return () => unsubscribe();
   }, []);
+ 
 
   return (
     <AuthContext.Provider value={{ user }}>

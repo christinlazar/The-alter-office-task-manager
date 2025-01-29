@@ -13,6 +13,8 @@ import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd"
 import { collection, getDocs, query, where, } from 'firebase/firestore'
 import { AlignLeft, Bold, Calendar, Italic, List, Strikethrough, X } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
+import Board from './Borad'
+import NoResults from '../components/notResult'
 
 
 export default function Dashboard() {
@@ -29,6 +31,8 @@ export default function Dashboard() {
   const [isChecked,setIsChecked] = useState<boolean>(false)
   const [bulkSelected,setBulkSelected] = useState<[]>([])
   const [selectedStatus,handleSelect] = useState('')
+  const [boradView,setBoardView] = useState<boolean>(false)
+  const [noresult,setNoResult] = useState<boolean>(false)
   const navigate = useNavigate()
 
   const [task, setTask] = useState<Task>({
@@ -53,20 +57,7 @@ export default function Dashboard() {
 
     const today = new Date().toISOString().split("T")[0]
 
-    // useEffect(() => {
-    //   const fetchTasks = async () => {
-    //     const querySnapshot = await getDocs(collection(db, "tasks"));
-    //     const tasks = querySnapshot.docs.map((doc) => ({
-    //       id: doc.id,
-    //       ...doc.data(),
-    //     }));
-    //     setTaskList(tasks);
-    //   };
-    //   fetchTasks();
-    //   return ()=>{
-    //     setReload(false)
-    //   }
-    // }, [reload]);
+   
     useEffect(() => {
       const fetchTasks = async () => {
         // Add a where clause to filter by userId
@@ -88,14 +79,14 @@ export default function Dashboard() {
     
       return () => {
         setReload(false);
+        setNoResult(false)
       };
     }, [reload, user.user?.uid]);
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
       if (e.target.files && e.target.files.length > 0) {
-        // Access the first file in the FileList
         const selectedFile = e.target.files[0];
-        setFile(selectedFile); // Assign to state
+        setFile(selectedFile); 
       } else {
         setFile(null); // Reset state if no file is selected
       }
@@ -192,7 +183,8 @@ const {mutate : handleSearch} = useMutation(searchTasks,{
     if(data?.success && data.tasks.length > 0){
       setTaskList(data.tasks)
     }else if(data?.tasks.length == 0){
-        toast.error("Can't find tasks with corresponding seach value")
+      setNoResult(true)
+        // toast.error("Can't find tasks with corresponding seach value")
     }
   },
   onError: (error) => {
@@ -299,7 +291,6 @@ const {mutate : handleSearch} = useMutation(searchTasks,{
   
     const handleDragEnd = (result: any) => {
       if (!result.destination) return;
-      console.log("result is",result)
       const sourceIndex = result.source.index;
       const destinationIndex = result.destination.index;
       console.log(sourceIndex,destinationIndex)
@@ -308,14 +299,14 @@ const {mutate : handleSearch} = useMutation(searchTasks,{
       }
 
       let filteredTasks = []
-      if(result.destination.droppableId == 'to-do-tasks'){
+      if(result.destination.droppableId == 'to-do-tasks' || result.destination.droppableId == 'to-do'){
          filteredTasks = taskList.filter((task:any) => task.isCompleted === "to-do");
-      }else if(result.destination.droppableId == 'in-progress-tasks'){
+      }else if(result.destination.droppableId == 'in-progress-tasks' || result.destination.droppableId == 'in-progress'){
          filteredTasks =  taskList.filter((task:any) => task.isCompleted == 'in-progress');
-      }else if(result.destination.droppableId == 'completed-tasks'){
+      }else if(result.destination.droppableId == 'completed-tasks' || result.destination.droppableId == 'completed'){
         filteredTasks = taskList.filter((task:any) => task?.isCompleted == 'completed')
       }
-
+ 
       const todoTasks = taskList.filter((task:any) => task.isCompleted === "to-do");
       const progressTasks = taskList.filter((task:any) => task.isCompleted == 'in-progress')
       const completedTasks = taskList.filter((task:any) => task.isCompleted == 'completed')
@@ -341,9 +332,9 @@ const {mutate : handleSearch} = useMutation(searchTasks,{
           const dateA = new Date(a.dueDate).getTime();
           const dateB = new Date(b.dueDate).getTime();
           if (targetValue === "ascending") {
-            return dateA - dateB; // Ascending order
+            return dateA - dateB; 
           } else if (targetValue === "descending") {
-            return dateB - dateA; // Descending order
+            return dateB - dateA; 
           } else {
             throw new Error("Invalid sorting order");
           }
@@ -372,7 +363,7 @@ const {mutate : handleSearch} = useMutation(searchTasks,{
       }
     }
 
-    const handlesearch = () =>{
+     const handlesearch = () =>{
       if(!searchValue.trim()){
         return toast.error("Please do a valid search")
       }
@@ -430,7 +421,7 @@ const {mutate : handleSearch} = useMutation(searchTasks,{
       {/* Header */}
       <header className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-2">
-          <span className="text-xl font-semibold">TaskBuddy</span>
+        <span className="text-xl font-semibold">📋 TaskBuddy</span>
         </div>
         <div className="flex items-center gap-4">
           <img
@@ -445,7 +436,10 @@ const {mutate : handleSearch} = useMutation(searchTasks,{
       {/* Navigation */}
       <nav className="flex gap-6 mb-6 border-b">
         <button
-          onClick={() => setActiveTab("list")}
+          onClick={() => {
+            setActiveTab("list")
+            setBoardView(false)
+          }}
           className={`pb-2 px-1 ${
             activeTab === "list" ? "border-b-2 border-purple-600 text-purple-600" : "text-gray-500"
           }`}
@@ -453,7 +447,10 @@ const {mutate : handleSearch} = useMutation(searchTasks,{
           List
         </button>
         <button
-          onClick={() => setActiveTab("board")}
+          onClick={() =>{
+            setActiveTab("board")
+            setBoardView(true)
+          }}
           className={`pb-2 px-1 ${
             activeTab === "board" ? "border-b-2 border-purple-600 text-purple-600" : "text-gray-500"
           }`}
@@ -522,10 +519,9 @@ const {mutate : handleSearch} = useMutation(searchTasks,{
       </div>
 
       {/* Task Sections */}
-      <div className="space-y-4">
-  {/* In Progress Section */}
-
-  {/*  */}
+  {
+    !boradView && !noresult ? (
+      <div className="space-y-4">  
   <div className="bg-white rounded-lg shadow">
   <button
     onClick={() => toggleSection("todo")}
@@ -848,6 +844,17 @@ const {mutate : handleSearch} = useMutation(searchTasks,{
   {/* Completed Section */}
 
       </div>
+    ) : !noresult && boradView ? (
+      <Board 
+       tasks={taskList}
+       handleDragEnd={handleDragEnd}
+       handleEditTask={handleEditTask}
+       handleDeleteTask={handleDeleteTask}
+       />
+    ):(
+      <NoResults/>
+    )
+  }
 {
             (modal || editModal) &&  createPortal(
 
@@ -1134,7 +1141,6 @@ document.body
 
       <button onClick={handleBulkEdit} className="text-sm text-red-500 hover:text-red-400 transition-colors">Delete</button>
     </div>
-        
             ,document.body
             )
           }

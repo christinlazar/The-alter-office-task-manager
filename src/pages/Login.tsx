@@ -1,13 +1,18 @@
 
-import React from "react";
+import React, { useEffect } from "react";
 import {signInWithGoogle,logOut } from '../firebase/firebaseConfig'
 import { useAuth } from "../context/authContext";
 import { FcGoogle } from "react-icons/fc";
+import { useNavigate } from "react-router-dom";
 
 const Login:React.FC = () => {
-
+const navigate = useNavigate()
   const {user} = useAuth()
-  console.log("user is",user)
+  useEffect(()=>{
+    if(user){
+      navigate('/dashboard')
+    }
+  },[])
   return (
     <div className="flex items-center justify-center min-h-screen bg-pink-50">
       <div className="text-center">
