@@ -1,6 +1,6 @@
 import {User} from 'firebase/auth'
 import {db} from '../firebase/firebaseConfig'
-import {collection, doc , addDoc ,getDocs, query, setDoc, where, getDoc, updateDoc,deleteDoc, writeBatch, orderBy, startAt, endAt} from 'firebase/firestore'
+import {collection, doc , addDoc ,getDocs, query, setDoc, where, getDoc, updateDoc,deleteDoc, orderBy, startAt, endAt} from 'firebase/firestore'
 import { Task } from '../types/types';
 
 export const saveUserData = async (user:User) => {

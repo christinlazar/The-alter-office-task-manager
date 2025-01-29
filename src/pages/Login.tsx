@@ -1,6 +1,6 @@
 
 import React, { useEffect } from "react";
-import {signInWithGoogle,logOut } from '../firebase/firebaseConfig'
+import {signInWithGoogle } from '../firebase/firebaseConfig'
 import { useAuth } from "../context/authContext";
 import { FcGoogle } from "react-icons/fc";
 import { useNavigate } from "react-router-dom";

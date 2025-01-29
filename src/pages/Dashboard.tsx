@@ -12,7 +12,6 @@ import { PencilIcon, TrashIcon } from '@heroicons/react/16/solid'
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd"
 import { collection, getDocs, query, where, } from 'firebase/firestore'
 import { AlignLeft, Bold, Calendar, Italic, List, Strikethrough, X } from 'lucide-react'
-import { useNavigate } from 'react-router-dom'
 import Board from './Borad'
 import NoResults from '../components/notResult'
 
